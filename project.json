@@ -1,0 +1,94 @@
+{
+  "client": {
+    "name": "Heriberto Cabrera y Asociados, P.C.",
+    "shortName": "GoNYLaw",
+    "tradeName": "GoNYLaw / GoEzLaw",
+    "slug": "heriberto-cabrera-asociados",
+    "sourceUrl": "https://gonylaw.com",
+    "businessType": "service",
+    "founder": "Heriberto Cabrera, Esq.",
+    "establishedYear": 1989,
+    "yearsOfPractice": 36,
+    "casesPrepared": 28000,
+    "address": "480 39th Street, Brooklyn, NY 11232",
+    "phone": "718-492-8822",
+    "email": "contacto@gonylaw.com",
+    "region": "NYC + Dominican Republic corridor",
+    "tagline": "Experiencia. Resultados. Confianza.",
+    "subtagline": "Servicios legales bilingües desde 1989."
+  },
+  "brand": {
+    "colors": {
+      "primary":   { "name": "Ink",        "hex": "#0F1614" },
+      "accent":    { "name": "Brass",      "hex": "#C9962E" },
+      "accent2":   { "name": "Brass Deep", "hex": "#8E6520" },
+      "secondary": { "name": "Oxblood",    "hex": "#7A2E18" },
+      "light":     { "name": "Paper",      "hex": "#F5F1E8" },
+      "lightDeep": { "name": "Paper Deep", "hex": "#EDE6D2" },
+      "dark":      { "name": "Deep Ink",   "hex": "#0A0A0A" }
+    },
+    "typography": {
+      "display": { "family": "Bodoni Moda", "weights": "400;500;600;700;800" },
+      "body":    { "family": "Inter",       "weights": "300;400;500;600;700" },
+      "italic":  { "family": "Bodoni Moda", "weights": "400;500", "style": "italic" }
+    },
+    "logo": {
+      "type": "wordmark+monogram",
+      "monogram": "G in a square frame, gold on black",
+      "wordmark": "GoNYLaw",
+      "tagline": "EXPERIENCIA · RESULTADOS · CONFIANZA",
+      "rule": "Use the firm's existing print-collateral monogram. Recreate as inline SVG."
+    }
+  },
+  "sections": [
+    "hero",
+    "credentials",
+    "services",
+    "founder-letter",
+    "process",
+    "ny-dr-corridor",
+    "testimonials",
+    "faq",
+    "contact-cta"
+  ],
+  "services": [
+    {
+      "key": "bankruptcy",
+      "name": "Bancarrota Capítulo 7",
+      "nameEn": "Chapter 7 Bankruptcy",
+      "brief": "Eliminación de deudas. Protección contra acreedores. Representación en el meeting de 341.",
+      "price": "Desde $499 + corte",
+      "duration": "90–120 días"
+    },
+    {
+      "key": "divorce",
+      "name": "Divorcios",
+      "nameEn": "Divorce — NY + Dominican Republic",
+      "brief": "Manejamos divorcios en NY y RD en paralelo, con apostilla cuando el caso lo cruza.",
+      "price": "Desde $499 + corte",
+      "duration": "60–180 días"
+    },
+    {
+      "key": "corporations",
+      "name": "Corporaciones",
+      "nameEn": "Corporations — LLC, INC, EIN",
+      "brief": "Formación, EIN, acuerdos operativos, registro en RD. Empresa lista para operar.",
+      "price": "Desde $399 + estado",
+      "duration": "1–3 días"
+    },
+    {
+      "key": "translations",
+      "name": "Traducciones Certificadas",
+      "nameEn": "Certified & Apostilled Translations",
+      "brief": "Para documentos que tienen que viajar. USCIS, cortes de NY, registros de RD.",
+      "price": "Desde $25 / página",
+      "duration": "24–72 horas"
+    }
+  ],
+  "hero": {
+    "concept": "TBD — Phase 2",
+    "frameCount": 0,
+    "imagePrompt": "TBD",
+    "motionPrompt": "TBD"
+  }
+}
