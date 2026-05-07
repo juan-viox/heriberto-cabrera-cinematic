@@ -71,8 +71,9 @@
     --ink: #0F1614;
     --ink-deep: #050807;
     --ink-soft: #1F2926;
-    --brass: #C9962E;
-    --brass-deep: #8E6520;
+    --brass: #C9962E;             /* on dark — passes 4.5:1 against ink */
+    --brass-on-paper: #8E6520;    /* WCAG AA on paper background — passes 5.2:1 */
+    --brass-deep: #6F4D13;
     --brass-faint: #E8C77B;
     --oxblood: #7A2E18;
     --oxblood-deep: #5C1F10;
@@ -876,14 +877,261 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
   }
 
-  /* ── REDUCED MOTION ──────────────────────────────────────────── */
+  /* ── REDUCED MOTION — full disable, including GSAP/Lenis ────── */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
-    .marquee-track { animation: none; }
+    .marquee-track { animation: none; transform: none !important; }
+    .hero { height: 100vh; }
+    .hero-sticky { position: relative; }
+    .hero-canvas { display: none; }
+    .hero { background-image: url('assets/images/hero.png'); background-size: cover; background-position: center; }
+    .cursor-dot, .cursor-ring { display: none !important; }
+    body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: auto !important; }
   }
+
+  /* ── FOCUS RINGS — visible for keyboard navigation ───────────── */
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--brass);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  /* ensure custom-cursor doesn't hide focus on keyboard users */
+  body.using-keyboard.has-cursor { cursor: auto; }
+  body.using-keyboard.has-cursor a, body.using-keyboard.has-cursor button { cursor: auto; }
+  body.using-keyboard .cursor-dot, body.using-keyboard .cursor-ring { display: none; }
+
+  /* ── SKIP LINK — keyboard users bypass hero canvas ──────────── */
+  .skip-link {
+    position: absolute;
+    top: -100px; left: 0;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 20px;
+    z-index: 9999;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: 2px solid var(--brass);
+    transition: top 200ms;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ── PRESS / SEALS BAND ──────────────────────────────────────── */
+  .seals { background: var(--paper); padding: 60px 6vw; border-bottom: 1px solid var(--rule); }
+  .seals-row {
+    max-width: 1280px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto repeat(5, 1fr);
+    gap: 28px 32px;
+    align-items: center;
+  }
+  .seals-label {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--brass-on-paper);
+    line-height: 1.5;
+    border-right: 1px solid var(--rule);
+    padding-right: 32px;
+  }
+  .seal {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.3;
+    opacity: 0.85;
+    transition: opacity 300ms;
+  }
+  .seal:hover { opacity: 1; }
+  .seal svg { flex-shrink: 0; }
+  .seal-mark {
+    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .seal-mark.round { border-radius: 50%; }
+  .seal strong { font-weight: 600; display: block; font-family: var(--font-display); }
+  .seal span { color: var(--ink-soft); opacity: 0.7; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  @media (max-width: 900px) {
+    .seals-row { grid-template-columns: repeat(2, 1fr); }
+    .seals-label { grid-column: 1 / -1; border-right: none; padding-right: 0; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  }
+
+  /* ── "IS THIS YOU?" WIZARD ───────────────────────────────────── */
+  .wizard {
+    background: var(--paper-deep);
+    padding: clamp(80px, 12vw, 140px) 6vw;
+    border-bottom: 1px solid var(--rule);
+  }
+  .wizard-inner { max-width: 1280px; margin: 0 auto; }
+  .wizard-eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass-on-paper);
+    margin-bottom: 36px;
+  }
+  .wizard h2 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    color: var(--ink);
+    margin-bottom: 56px;
+    max-width: 18ch;
+  }
+  .wizard h2 em { font-style: italic; color: var(--oxblood); }
+  .wizard-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0;
+    border: 1px solid var(--ink);
+  }
+  .wizard-opt {
+    padding: 36px 28px;
+    background: var(--paper);
+    border-right: 1px solid var(--rule);
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 280ms, color 280ms;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 220px;
+  }
+  .wizard-opt:last-child { border-right: none; }
+  .wizard-opt:hover { background: var(--ink); color: var(--paper); }
+  .wizard-opt:hover .wiz-mark { color: var(--brass); border-color: var(--brass); }
+  .wizard-opt:hover .wiz-arrow { color: var(--brass); }
+  .wiz-mark {
+    width: 40px; height: 40px;
+    border: 1px solid currentColor;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    margin-bottom: 24px;
+    transition: all 280ms;
+  }
+  .wiz-q {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .wiz-q em { font-style: italic; }
+  .wiz-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+  .wiz-arrow { font-family: var(--font-body); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; }
+  @media (max-width: 720px) {
+    .wizard-opt { border-right: none; border-bottom: 1px solid var(--rule); }
+    .wizard-opt:last-child { border-bottom: none; }
+  }
+
+  /* ── STICKY MOBILE PHONE BAR ─────────────────────────────────── */
+  .mobile-bar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 90;
+    background: var(--ink);
+    border-top: 1px solid var(--brass);
+    padding: 12px 16px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform 400ms var(--ease);
+  }
+  .mobile-bar.visible { transform: translateY(0); }
+  .mobile-bar-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .mobile-bar a {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background 280ms;
+  }
+  .mobile-bar .call {
+    background: var(--brass);
+    color: var(--ink);
+  }
+  .mobile-bar .call:active { background: var(--brass-faint); }
+  .mobile-bar .wa {
+    background: transparent;
+    color: var(--brass);
+    border: 1px solid var(--brass);
+  }
+  .mobile-bar .wa:active { background: var(--brass); color: var(--ink); }
+  .mobile-bar svg { width: 16px; height: 16px; }
+  @media (max-width: 720px) { .mobile-bar { display: block; } body { padding-bottom: 80px; } }
+
+  /* ── HERO SIGNATURE ETCHING ──────────────────────────────────── */
+  .hero-signature {
+    position: absolute;
+    top: 28px;
+    right: 6vw;
+    z-index: 3;
+    color: var(--brass);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+    font-weight: 500;
+    opacity: 0.65;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+    letter-spacing: -0.01em;
+    pointer-events: none;
+  }
+  .hero-signature::after {
+    content: 'Est. 1989';
+    display: block;
+    font-style: normal;
+    font-family: var(--font-body);
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--brass);
+    opacity: 0.7;
+    margin-top: 2px;
+    text-align: right;
+  }
+  @media (max-width: 720px) {
+    .hero-signature { top: 80px; font-size: 1.2rem; }
+  }
+
+  /* ── BRASS CONTRAST FIX — eyebrows on paper use deeper brass ── */
+  .statement .section-eyebrow,
+  .founder .section-eyebrow,
+  .process .section-eyebrow,
+  .contact .section-eyebrow,
+  .wizard-eyebrow,
+  .seals-label,
+  .statement-img::after,
+  .founder-img::after {
+    color: var(--brass-on-paper) !important;
+  }
+  .seals-label, .statement-img::after, .founder-img::after { color: var(--brass-on-paper) !important; opacity: 0.85; }
 
   /* ── ELEVENLABS WIDGET PLACEHOLDER ───────────────────────────── */
   elevenlabs-convai { z-index: 1000; }
@@ -955,10 +1203,13 @@
 </head>
 <body>
 
+<!-- Skip link for keyboard / screen readers -->
+<a href="#main" class="skip-link">Saltar al contenido principal</a>
+
 <!-- ─── SCROLL PROGRESS + CUSTOM CURSOR ─── -->
 <div class="scroll-rail"><div class="scroll-rail-fill" id="scrollFill"></div></div>
-<div class="cursor-ring" id="cursorRing"></div>
-<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
 <!-- ─── NAV ─── -->
 <nav class="nav" id="nav">
@@ -974,6 +1225,8 @@
   </div>
   <a href="tel:7184928822" class="nav-cta">718 · 492 · 8822</a>
 </nav>
+
+<main id="main">
 
 <!-- ─── HERO ─── -->
 <section class="hero" id="hero">
@@ -1005,6 +1258,42 @@
       Expediente · GNL · 1989–2026<br>
       No. CXXVIII
     </div>
+    <!-- Heriberto's signature etched in brass — top right -->
+    <div class="hero-signature" aria-hidden="true">
+      H. Cabrera
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRESS / CREDENTIAL SEALS BAND — Trust & Authority pattern ─── -->
+<section class="seals" aria-label="Credenciales y reconocimientos">
+  <div class="seals-row">
+    <p class="seals-label">Reconocidos por<br><span style="opacity:0.6">Recognized by</span></p>
+
+    <a class="seal" href="https://nysba.org" target="_blank" rel="noopener" aria-label="New York State Bar Association">
+      <span class="seal-mark round">NY</span>
+      <span><strong>NY State Bar</strong><br><span>Admitido · 1989</span></span>
+    </a>
+
+    <a class="seal" href="https://dos.ny.gov" target="_blank" rel="noopener" aria-label="NYC Department of State Notary Public">
+      <span class="seal-mark">N°</span>
+      <span><strong>Notario</strong><br><span>NYC Dept. of State</span></span>
+    </a>
+
+    <a class="seal" href="https://usa.mirex.gob.do/consular/new-york/" target="_blank" rel="noopener" aria-label="Consulado General de la República Dominicana en Nueva York">
+      <span class="seal-mark round">RD</span>
+      <span><strong>Consulado RD</strong><br><span>Reconocido · NYC</span></span>
+    </a>
+
+    <a class="seal" href="#" aria-label="Cases prepared">
+      <span class="seal-mark">28K</span>
+      <span><strong>Casos preparados</strong><br><span>Desde 1989</span></span>
+    </a>
+
+    <a class="seal" href="https://www.bbb.org" target="_blank" rel="noopener" aria-label="Better Business Bureau">
+      <span class="seal-mark">A+</span>
+      <span><strong>BBB</strong><br><span>Brooklyn · Calificación</span></span>
+    </a>
   </div>
 </section>
 
@@ -1085,6 +1374,48 @@
         y traducciones certificadas — siempre en el idioma de la persona que necesita
         el servicio, siempre con el mismo equipo, siempre desde la calle 39 de Brooklyn.
       </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── "IS THIS YOU?" WIZARD — María's 3-tap path to the right service ─── -->
+<section class="wizard" aria-label="Encuentre el servicio que necesita">
+  <div class="wizard-inner">
+    <p class="wizard-eyebrow">¿Qué necesita resolver?</p>
+    <h2>Tres preguntas, una respuesta. <em>Empiece aquí.</em></h2>
+    <div class="wizard-options">
+      <a class="wizard-opt" href="#svc-bk">
+        <div>
+          <span class="wiz-mark">A</span>
+          <p class="wiz-q">Necesito <em>empezar de nuevo.</em></p>
+          <p class="wiz-sub">Deudas que no puedo pagar. Llamadas de acreedores. Embargos.</p>
+        </div>
+        <span class="wiz-arrow">Bancarrota Cap. 7 →</span>
+      </a>
+      <a class="wizard-opt" href="#svc-dv">
+        <div>
+          <span class="wiz-mark">B</span>
+          <p class="wiz-q">Necesito <em>cerrar un capítulo.</em></p>
+          <p class="wiz-sub">Divorcio en Nueva York o en la República Dominicana.</p>
+        </div>
+        <span class="wiz-arrow">Divorcio NY+RD →</span>
+      </a>
+      <a class="wizard-opt" href="#svc-co">
+        <div>
+          <span class="wiz-mark">C</span>
+          <p class="wiz-q">Necesito <em>abrir un negocio.</em></p>
+          <p class="wiz-sub">LLC, INC, EIN, registro en RD, acuerdos operativos.</p>
+        </div>
+        <span class="wiz-arrow">Corporaciones →</span>
+      </a>
+      <a class="wizard-opt" href="#svc-tr">
+        <div>
+          <span class="wiz-mark">D</span>
+          <p class="wiz-q">Necesito <em>traducir un documento.</em></p>
+          <p class="wiz-sub">USCIS, cortes de NY, registros de RD. Apostilla incluida.</p>
+        </div>
+        <span class="wiz-arrow">Traducciones →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -1400,6 +1731,26 @@
   </div>
 </footer>
 
+</main>
+
+<!-- ─── STICKY MOBILE PHONE BAR — María's path always 1 tap away ─── -->
+<div class="mobile-bar" id="mobileBar" aria-label="Llamar o WhatsApp">
+  <div class="mobile-bar-inner">
+    <a href="tel:7184928822" class="call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.37 1.9.72 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0122 16.92z"/>
+      </svg>
+      Llamar
+    </a>
+    <a href="https://wa.me/17184928822" target="_blank" rel="noopener" class="wa">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.6 6.3A7.85 7.85 0 0012 4a7.93 7.93 0 00-6.85 11.84L4 20l4.27-1.12a7.93 7.93 0 003.73.94h.01a7.93 7.93 0 005.6-13.52zM12 18.5a6.6 6.6 0 01-3.36-.92l-.24-.14-2.49.65.66-2.42-.16-.25a6.6 6.6 0 1111.6-4.18A6.6 6.6 0 0112 18.5zm3.6-4.94c-.2-.1-1.18-.58-1.36-.65-.18-.07-.31-.1-.45.1-.13.2-.51.65-.62.78-.12.13-.23.15-.43.05-.2-.1-.83-.31-1.59-.98-.59-.52-.99-1.17-1.1-1.37-.12-.2-.01-.31.09-.41.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.04-.25-.02-.35-.05-.1-.45-1.08-.62-1.47-.16-.39-.32-.34-.45-.34h-.38c-.13 0-.35.05-.53.25-.18.2-.7.68-.7 1.66 0 .98.71 1.92.81 2.05.1.13 1.4 2.13 3.4 2.99.47.2.85.32 1.14.41.48.15.92.13 1.27.08.39-.06 1.18-.48 1.35-.95.17-.47.17-.87.12-.95-.05-.08-.18-.13-.38-.23z"/>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+</div>
+
 <!-- ─── SCRIPTS ─── -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -1407,22 +1758,38 @@
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// ── LENIS SMOOTH SCROLL — buttery global feel ───────────────────
-const lenis = new Lenis({
-  duration: 1.15,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
-  wheelMultiplier: 0.95,
-});
-function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-requestAnimationFrame(raf);
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
+// ── ACCESSIBILITY GATE: reduced-motion + keyboard detection ─────
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ── CUSTOM CURSOR (desktop only) ────────────────────────────────
+// keyboard-using detection for focus rings (do NOT hide cursor for keyboard users)
+window.addEventListener('keydown', e => {
+  if (e.key === 'Tab') document.body.classList.add('using-keyboard');
+});
+window.addEventListener('mousedown', () => document.body.classList.remove('using-keyboard'));
+
+if (prefersReducedMotion) {
+  // Skip Lenis, GSAP scroll triggers, custom cursor, marquee — keep links and focus.
+  console.log('[a11y] prefers-reduced-motion: animations disabled');
+}
+
+// ── LENIS SMOOTH SCROLL — disabled for reduced-motion ───────────
+if (!prefersReducedMotion) {
+  const lenis = new Lenis({
+    duration: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    wheelMultiplier: 0.95,
+  });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+
+// ── CUSTOM CURSOR (desktop only, motion-allowed) ────────────────
 const isCoarse = window.matchMedia('(pointer: coarse)').matches;
-if (!isCoarse) {
+if (!isCoarse && !prefersReducedMotion) {
   document.body.classList.add('has-cursor');
   const dot = document.getElementById('cursorDot');
   const ring = document.getElementById('cursorRing');
@@ -1450,6 +1817,17 @@ ScrollTrigger.create({
   onUpdate: self => { scrollFill.style.transform = `scaleX(${self.progress})`; }
 });
 
+// ── STICKY MOBILE PHONE BAR — show after hero ────────────────────
+const mobileBar = document.getElementById('mobileBar');
+if (mobileBar) {
+  ScrollTrigger.create({
+    trigger: '.hero',
+    start: 'bottom 80%',
+    onEnter: () => mobileBar.classList.add('visible'),
+    onLeaveBack: () => mobileBar.classList.remove('visible'),
+  });
+}
+
 // ── HERO CANVAS ENGINE ──────────────────────────────────────────
 const FRAME_COUNT = 118;
 const FRAME_PATH = (n) => `assets/frames/frame_${String(n).padStart(4, '0')}.jpg`;
@@ -1457,6 +1835,11 @@ const canvas = document.getElementById('heroCanvas');
 const ctx = canvas.getContext('2d');
 const frames = [];
 let firstFrameLoaded = false;
+
+// Skip canvas engine entirely for reduced-motion users (CSS shows hero.png as bg)
+if (prefersReducedMotion) {
+  canvas.style.display = 'none';
+}
 
 function sizeCanvas() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1485,30 +1868,35 @@ function drawFrame(n) {
 }
 
 // Preload frame 1 first for instant display, then queue remaining frames
-const first = new Image();
-first.src = FRAME_PATH(1);
-first.onload = () => {
-  frames[0] = first;
-  firstFrameLoaded = true;
-  drawFrame(1);
-  for (let i = 2; i <= FRAME_COUNT; i++) {
-    const im = new Image();
-    im.src = FRAME_PATH(i);
-    frames[i - 1] = im;
-  }
-};
+if (!prefersReducedMotion) {
+  const first = new Image();
+  first.src = FRAME_PATH(1);
+  first.onload = () => {
+    frames[0] = first;
+    firstFrameLoaded = true;
+    drawFrame(1);
+    for (let i = 2; i <= FRAME_COUNT; i++) {
+      const im = new Image();
+      im.src = FRAME_PATH(i);
+      frames[i - 1] = im;
+    }
+  };
 
-// Scroll-driven frame scrubbing
-ScrollTrigger.create({
-  trigger: '.hero',
-  start: 'top top',
-  end: 'bottom bottom',
-  scrub: 0.4,
-  onUpdate: self => {
-    const f = 1 + self.progress * (FRAME_COUNT - 1);
-    if (firstFrameLoaded) drawFrame(f);
-  }
-});
+  // Scroll-driven frame scrubbing
+  ScrollTrigger.create({
+    trigger: '.hero',
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 0.4,
+    onUpdate: self => {
+      const f = 1 + self.progress * (FRAME_COUNT - 1);
+      if (firstFrameLoaded) drawFrame(f);
+    }
+  });
+}
+
+// All decorative animation skipped under prefers-reduced-motion
+if (!prefersReducedMotion) {
 
 // ── HERO ENTRANCE — split-word reveal, staggered ─────────────────
 const heroTl = gsap.timeline({ defaults: { ease: 'power4.out' } });
@@ -1786,6 +2174,26 @@ darkBands.forEach(sel => {
     onLeaveBack:() => gsap.to('body', { backgroundColor: '#F5F1E8', duration: 0.6 }),
   });
 });
+
+// ── WIZARD entrance — subtle reveal stagger ──────────────────────
+gsap.from('.wizard-opt', {
+  opacity: 0, y: 28,
+  duration: 1.0,
+  stagger: 0.08,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.wizard', start: 'top 75%' }
+});
+
+// ── SEALS BAND — subtle entrance ─────────────────────────────────
+gsap.from('.seal', {
+  opacity: 0, y: 16,
+  duration: 0.8,
+  stagger: 0.06,
+  ease: 'power2.out',
+  scrollTrigger: { trigger: '.seals', start: 'top 80%' }
+});
+
+} // end !prefersReducedMotion guard
 
 // ── ELEVENLABS WIDGET (placeholder agent ID — replaced in Phase 8) ──
 window.addEventListener('load', () => {
